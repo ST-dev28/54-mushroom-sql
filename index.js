@@ -30,6 +30,20 @@ app.init = async () => {
         console.log(`${num}) ${mushroomNameFirstCapital} - ${mushroomPrice} EUR/kg`);
     }
 
+    //**2.** _Isspausdinti, visu grybautoju vardus
+    sql = 'SELECT `name` FROM `gatherer`';
+    [rows] = await connection.execute(sql);
+    //console.log(rows);
+    let gatherersList = [];
+    for (let i = 0; i < rows.length; i++) {
+        const picker = rows[i].name;
+        if (!gatherersList.includes(picker)) {
+            gatherersList.push(picker);
+        }
+    }
+    console.log(`Grybautojai: ${gatherersList.join(', ')}.`);
+
+
 }
 
 app.init();
