@@ -15,6 +15,21 @@ app.init = async () => {
 
     // LOGIC BELOW
 
+    //**1.** _Isspausdinti, visu grybu pavadinimus ir ju kainas, 
+    //grybus isrikiuojant nuo brangiausio link pigiausio
+    sql = 'SELECT `mushroom`, `price` FROM`mushroom` ORDER BY`mushroom`.`price` DESC';
+    [rows] = await connection.execute(sql);
+    //console.log(rows);
+    console.log(`Grybai: `);
+    let num = 0;
+    for (let i = 0; i < rows.length; i++) {
+        ++num;
+        const mushroomName = rows[i].mushroom;
+        const mushroomPrice = rows[i].price;
+        const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
+        console.log(`${num}) ${mushroomNameFirstCapital} - ${mushroomPrice} EUR/kg`);
+    }
+
 }
 
 app.init();
