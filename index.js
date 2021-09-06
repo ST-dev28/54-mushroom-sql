@@ -50,10 +50,11 @@ app.init = async () => {
     console.log(`Brangiausias grybas yra: ${rows[0].mushroom}.`);
 
     //**4.** _Isspausdinti, pigiausio grybo pavadinima
-    sql = 'SELECT MIN(price) AS SmallestPrice, `mushroom` FROM `mushroom`';
+    //sql = 'SELECT MIN(price) AS SmallestPrice, `mushroom` FROM `mushroom`';
+    sql = 'SELECT `mushroom`, `price` FROM`mushroom` ORDER BY `price` DESC;';
     [rows] = await connection.execute(sql);
     console.log(rows);
-    //console.log(`Pigiausias grybas yra: ${rows[0].mushroom}.`);
+    console.log(`Pigiausias grybas yra: ${rows[rows.length - 1].mushroom}.`);
 
     //** 5. ** _Isspausdinti, visu kiek vidutiniskai reikia grybu, 
     //jog jie svertu 1 kilograma(suapvalinti iki vieno skaiciaus po kablelio), 
@@ -76,7 +77,22 @@ app.init = async () => {
 
         console.log(`${numb}) ${mushroomNameFirstCapital} - ${need}`);
     }
+
+    //**6.** _Isspausdinti, visu grybautoju krepselyje esanciu grybu kiekius 
+    //(issirikiuojant pagal grybautojo varda nuo abeceles pradzios link pabaigos)
+    //sql = 'SELECT * FROM`gatherer` ORDER BY`gatherer`.`name` ASC';
+    sql = 'SELECT `gatherer_id`, SUM(count), COUNT(gatherer_id) FROM `basket` GROUP BY `gatherer_id`';
+    [rows] = await connection.execute(sql);
+    console.log(rows);
+    console.log(`Grybu kiekis pas grybautoja: `);
+    let basketPerPerson = 0;
+    for (let i = 0; i < rows.length; i++) {
+    }
+
+    console.log(basketPerPerson);
+
 }
+
 
 app.init();
 
