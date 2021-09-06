@@ -33,7 +33,6 @@ app.init = async () => {
     //**2.** _Isspausdinti, visu grybautoju vardus
     sql = 'SELECT `name` FROM `gatherer`';
     [rows] = await connection.execute(sql);
-    //console.log(rows);
     let gatherersList = [];
     for (let i = 0; i < rows.length; i++) {
         const picker = rows[i].name;
@@ -46,14 +45,12 @@ app.init = async () => {
     //**3.** _Isspausdinti, brangiausio grybo pavadinima
     sql = 'SELECT MAX(price) AS LargestPrice, `mushroom` FROM `mushroom`';
     [rows] = await connection.execute(sql);
-    console.log(rows);
     console.log(`Brangiausias grybas yra: ${rows[0].mushroom}.`);
 
     //**4.** _Isspausdinti, pigiausio grybo pavadinima
     //sql = 'SELECT MIN(price) AS SmallestPrice, `mushroom` FROM `mushroom`';
     sql = 'SELECT `mushroom`, `price` FROM`mushroom` ORDER BY `price` DESC;';
     [rows] = await connection.execute(sql);
-    console.log(rows);
     console.log(`Pigiausias grybas yra: ${rows[rows.length - 1].mushroom}.`);
 
     //** 5. ** _Isspausdinti, visu kiek vidutiniskai reikia grybu, 
@@ -61,11 +58,11 @@ app.init = async () => {
     //isrikiuojant pagal pavadinima nuo abeceles pradzios link pabaigos
     sql = 'SELECT `mushroom`, `weight` FROM `mushroom`';
     [rows] = await connection.execute(sql);
-    //console.log(rows);
-    console.log(`Grybai: `);
+
     let missingTillKg = 0;
     const needKg = 1000;
     let numb = 0;
+    let mushroomsList = [];
     for (let i = 0; i < rows.length; i++) {
         ++numb;
         const mushroomName = rows[i].mushroom;
@@ -74,16 +71,17 @@ app.init = async () => {
 
         const need = missingTillKg % 1 ? missingTillKg.toFixed(1) : missingTillKg.toFixed();
         const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
-
-        console.log(`${numb}) ${mushroomNameFirstCapital} - ${need}`);
+        mushroomsList.push(`${numb}) ${mushroomNameFirstCapital} - ${need}`);
     }
+    console.log('Grybai:');
+    console.log(mushroomsList.join('\n'));
 
     //**6.** _Isspausdinti, visu grybautoju krepselyje esanciu grybu kiekius 
     //(issirikiuojant pagal grybautojo varda nuo abeceles pradzios link pabaigos)
     //sql = 'SELECT * FROM`gatherer` ORDER BY`gatherer`.`name` ASC';
     sql = 'SELECT `gatherer_id`, SUM(count), COUNT(gatherer_id) FROM `basket` GROUP BY `gatherer_id`';
     [rows] = await connection.execute(sql);
-    console.log(rows);
+    //console.log(rows);
     console.log(`Grybu kiekis pas grybautoja: `);
     let basketPerPerson = 0;
     for (let i = 0; i < rows.length; i++) {
