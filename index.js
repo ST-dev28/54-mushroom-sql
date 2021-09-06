@@ -24,41 +24,64 @@ app.init = async () => {
     sql = 'SELECT `mushroom`, `price` FROM`mushroom` ORDER BY`mushroom`.`price` DESC';
     [rows] = await connection.execute(sql);
     //console.log(rows);
+
     console.log(`Grybai: `);
-    let num = 0;
-    for (let i = 0; i < rows.length; i++) {
-        ++num;
-        const mushroomName = rows[i].mushroom;
-        const mushroomPrice = rows[i].price;
-        //const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
-        console.log(`${num}) ${firstCapital(mushroomName)} - ${mushroomPrice} EUR/kg`);
+    let i = 0;
+    for (const { mushroom, price } of rows) {
+        console.log(`${++i}) ${firstCapital(mushroom)} - ${price} EUR/kg`);
+
     }
+    /*
+        // ARBA
+        let num = 0;
+        for (let i = 0; i < rows.length; i++) {
+            ++num;
+            const mushroomName = rows[i].mushroom;
+            const mushroomPrice = rows[i].price;
+            //const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
+            console.log(`${num}) ${firstCapital(mushroomName)} - ${mushroomPrice} EUR/kg`);
+        }
+*/
     console.log('------------------------');
 
     //**2.** _Isspausdinti, visu grybautoju vardus
     sql = 'SELECT `name` FROM `gatherer`';
     [rows] = await connection.execute(sql);
-    let gatherersList = [];
-    for (let i = 0; i < rows.length; i++) {
-        const picker = rows[i].name;
-        if (!gatherersList.includes(picker)) {
-            gatherersList.push(picker);
+    const names = rows.map(obj => obj.name);
+    console.log(`Grybautojai: ${names.join(', ')}.`)
+    /*
+        //ARBA 
+        let gatherersList = [];
+        for (let i = 0; i < rows.length; i++) {
+            const picker = rows[i].name;
+            if (!gatherersList.includes(picker)) {
+                gatherersList.push(picker);
+            }
         }
-    }
-    console.log(`Grybautojai: ${gatherersList.join(', ')}.`);
+        console.log(`Grybautojai: ${gatherersList.join(', ')}.`);*/
     console.log('------------------------');
 
     //**3.** _Isspausdinti, brangiausio grybo pavadinima
-    sql = 'SELECT MAX(price) AS LargestPrice, `mushroom` FROM `mushroom`';
+    //sql = 'SELECT MAX(price) AS LargestPrice, `mushroom` FROM `mushroom`';
+    //[rows] = await connection.execute(sql);
+    //const maxPrice = rows[0].maxPrice;
+    //sukonstruojam subquery
+    sql = 'SELECT `mushroom` FROM `mushroom` WHERE `price`=\
+    (SELECT MAX(price) FROM `mushroom`)';
     [rows] = await connection.execute(sql);
-    console.log(`Brangiausias grybas yra: ${rows[0].mushroom}.`);
+    console.log(`Brangiausias grybas yra: ${firstCapital(rows[0].mushroom)}.`);
     console.log('------------------------');
 
     //**4.** _Isspausdinti, pigiausio grybo pavadinima
-    //sql = 'SELECT MIN(price) AS SmallestPrice, `mushroom` FROM `mushroom`';
-    sql = 'SELECT `mushroom`, `price` FROM`mushroom` ORDER BY `price` DESC;';
+    /*sql = 'SELECT `mushroom`, `price` FROM`mushroom` ORDER BY `price` DESC;';
     [rows] = await connection.execute(sql);
     console.log(`Pigiausias grybas yra: ${rows[rows.length - 1].mushroom}.`);
+    */
+    //ARBA 
+    sql = 'SELECT `mushroom` FROM `mushroom` WHERE `price`=\
+    (SELECT MIN(price) FROM `mushroom`)';
+    [rows] = await connection.execute(sql);
+    console.log(`Pigiausias grybas yra: ${firstCapital(rows[0].mushroom)}.`);
     console.log('------------------------');
 
     //** 5. ** _Isspausdinti, visu kiek vidutiniskai reikia grybu, 
@@ -135,11 +158,25 @@ app.init = async () => {
     sql3 = 'SELECT `basket`.`gatherer_id`, `basket`.`mushroom_id`, `basket`.`count` FROM `basket`';
     [rows3] = await connection.execute(sql3);
 
-    console.log(rows);
-    console.log(rows2);
-    console.log(rows3);
+    //console.log(rows);
+    //console.log(rows2);
+    //console.log(rows3);
 
-
+    /*let mushroomSortList = [];
+    for (const { mushroom_id } of rows3) {
+        mushroomSortList.push(mushroom_id);
+        console.log(mushroomSortList);
+    }
+    for (i = 0; i < mushroomSortList.length; i++) {
+        const sort = mushroomSortList[i];
+        let qtyPerSort = 0
+        for (const { mushroom_id, count } of rows3) {
+            if (sort === i + 1) {
+                qtyPerSort += count;
+            }
+        }
+        mushroomSortList.push(person, qtyPerSort)
+    }*/
 }
 
 app.init();
