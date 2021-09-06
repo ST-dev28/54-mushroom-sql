@@ -15,6 +15,10 @@ app.init = async () => {
 
     // LOGIC BELOW
 
+    function firstCapital(str) {
+        return str[0].toUpperCase() + str.slice(1);
+    }
+
     //**1.** _Isspausdinti, visu grybu pavadinimus ir ju kainas, 
     //grybus isrikiuojant nuo brangiausio link pigiausio
     sql = 'SELECT `mushroom`, `price` FROM`mushroom` ORDER BY`mushroom`.`price` DESC';
@@ -26,8 +30,8 @@ app.init = async () => {
         ++num;
         const mushroomName = rows[i].mushroom;
         const mushroomPrice = rows[i].price;
-        const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
-        console.log(`${num}) ${mushroomNameFirstCapital} - ${mushroomPrice} EUR/kg`);
+        //const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
+        console.log(`${num}) ${firstCapital(mushroomName)} - ${mushroomPrice} EUR/kg`);
     }
     console.log('------------------------');
 
@@ -74,8 +78,8 @@ app.init = async () => {
         missingTillKg = needKg / weightPerSort;
 
         const need = missingTillKg % 1 ? missingTillKg.toFixed(1) : missingTillKg.toFixed();
-        const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
-        mushroomsList.push(`${numb}) ${mushroomNameFirstCapital} - ${need}`);
+        //const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
+        mushroomsList.push(`${numb}) ${firstCapital(mushroomName)} - ${need}`);
     }
     console.log('Grybai:');
     console.log(mushroomsList.join('\n'));
@@ -120,9 +124,23 @@ app.init = async () => {
     }
     console.log('------------------------');
 
+    //** 7. ** _Isspausdinti, visu grybautoju krepseliu kainas(issirikiuojant 
+    //nuo brangiausio link pigiausio krepselio), suapvalinant iki centu
+    sql = 'SELECT * FROM `mushroom` ORDER BY `id` ASC;';
+    [rows] = await connection.execute(sql);
+
+    sql2 = 'SELECT * FROM`gatherer` ORDER BY `name` ASC;';
+    [rows2] = await connection.execute(sql2);
+
+    sql3 = 'SELECT `basket`.`gatherer_id`, `basket`.`mushroom_id`, `basket`.`count` FROM `basket`';
+    [rows3] = await connection.execute(sql3);
+
+    console.log(rows);
+    console.log(rows2);
+    console.log(rows3);
+
 
 }
-
 
 app.init();
 
