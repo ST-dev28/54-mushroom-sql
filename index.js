@@ -29,6 +29,7 @@ app.init = async () => {
         const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
         console.log(`${num}) ${mushroomNameFirstCapital} - ${mushroomPrice} EUR/kg`);
     }
+    console.log('------------------------');
 
     //**2.** _Isspausdinti, visu grybautoju vardus
     sql = 'SELECT `name` FROM `gatherer`';
@@ -41,17 +42,20 @@ app.init = async () => {
         }
     }
     console.log(`Grybautojai: ${gatherersList.join(', ')}.`);
+    console.log('------------------------');
 
     //**3.** _Isspausdinti, brangiausio grybo pavadinima
     sql = 'SELECT MAX(price) AS LargestPrice, `mushroom` FROM `mushroom`';
     [rows] = await connection.execute(sql);
     console.log(`Brangiausias grybas yra: ${rows[0].mushroom}.`);
+    console.log('------------------------');
 
     //**4.** _Isspausdinti, pigiausio grybo pavadinima
     //sql = 'SELECT MIN(price) AS SmallestPrice, `mushroom` FROM `mushroom`';
     sql = 'SELECT `mushroom`, `price` FROM`mushroom` ORDER BY `price` DESC;';
     [rows] = await connection.execute(sql);
     console.log(`Pigiausias grybas yra: ${rows[rows.length - 1].mushroom}.`);
+    console.log('------------------------');
 
     //** 5. ** _Isspausdinti, visu kiek vidutiniskai reikia grybu, 
     //jog jie svertu 1 kilograma(suapvalinti iki vieno skaiciaus po kablelio), 
@@ -75,19 +79,47 @@ app.init = async () => {
     }
     console.log('Grybai:');
     console.log(mushroomsList.join('\n'));
+    console.log('------------------------');
 
     //**6.** _Isspausdinti, visu grybautoju krepselyje esanciu grybu kiekius 
     //(issirikiuojant pagal grybautojo varda nuo abeceles pradzios link pabaigos)
-    //sql = 'SELECT * FROM`gatherer` ORDER BY`gatherer`.`name` ASC';
-    sql = 'SELECT `gatherer_id`, SUM(count), COUNT(gatherer_id) FROM `basket` GROUP BY `gatherer_id`';
+    //sql = 'SELECT `gatherer_id`, SUM(count), COUNT(gatherer_id)\
+    //           FROM `basket` GROUP BY `gatherer_id` ASC';
+    sql = 'SELECT `basket`.`gatherer_id` as picker, `count`\
+            FROM`basket` ORDER BY `gatherer_id` ASC;';
     [rows] = await connection.execute(sql);
-    //console.log(rows);
-    console.log(`Grybu kiekis pas grybautoja: `);
-    let basketPerPerson = 0;
-    for (let i = 0; i < rows.length; i++) {
-    }
 
-    console.log(basketPerPerson);
+    sql2 = 'SELECT `gatherer`.`name`, `gatherer`.`id`\
+            FROM`gatherer` ORDER BY `name` ASC;';
+    [rows2] = await connection.execute(sql2);
+    //console.log(rows);
+    //console.log(rows2);
+
+    console.log(`Grybu kiekis pas grybautoja: `);
+
+    let pickers = [];
+    let newList = [];
+    let number = 0;
+
+    for (const { name } of rows2) {
+        pickers.push(name);
+    }
+    for (i = 0; i < pickers.length; i++) {
+        const person = pickers[i];
+        let basketPerPerson = 0;
+        for (const { picker, count } of rows) {
+            if (picker === i + 1) {
+                basketPerPerson += count;
+            }
+        }
+        newList.push({ person, basketPerPerson })
+    }
+    for (const { person, basketPerPerson } of newList) {
+        const fullInfo = `${++number}) ${person} - ${basketPerPerson}`;
+        console.log(`${fullInfo} grybu`);
+    }
+    console.log('------------------------');
+
 
 }
 
