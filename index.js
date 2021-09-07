@@ -201,14 +201,13 @@ app.init = async () => {
                 GROUP BY `basket`.`gatherer_id`\
                 ORDER BY `amount` DESC';
     [rows] = await connection.execute(sql);
-    console.log(rows);
+    //console.log(rows);
     console.log(`Grybu krepselio kainos pas grybautoja:`);
     i = 0;
     for (const item of rows) {
         console.log(`${++i}) ${firstCapital(item.name)} - ${+item.amount} EUR`); //${+(+item.amount).toFixed(1)} prieki pliusas nuima skaicius po kablelio
     }
     console.log('------------------------');
-
 }
 
 app.init();
