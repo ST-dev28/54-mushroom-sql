@@ -87,63 +87,106 @@ app.init = async () => {
     //** 5. ** _Isspausdinti, visu kiek vidutiniskai reikia grybu, 
     //jog jie svertu 1 kilograma(suapvalinti iki vieno skaiciaus po kablelio), 
     //isrikiuojant pagal pavadinima nuo abeceles pradzios link pabaigos
-    sql = 'SELECT `mushroom`, `weight` FROM `mushroom`';
+    /*  sql = 'SELECT `mushroom`, `weight` FROM `mushroom`';
+       [rows] = await connection.execute(sql);
+   
+       let missingTillKg = 0;
+       const needKg = 1000;
+       let numb = 0;
+       let mushroomsList = [];
+       for (let i = 0; i < rows.length; i++) {
+           ++numb;
+           const mushroomName = rows[i].mushroom;
+           const weightPerSort = rows[i].weight;
+           missingTillKg = needKg / weightPerSort;
+   
+           const need = missingTillKg % 1 ? missingTillKg.toFixed(1) : missingTillKg.toFixed();
+           //const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
+           mushroomsList.push(`${numb}) ${firstCapital(mushroomName)} - ${need}`);
+       }
+       console.log('Grybai:');
+       console.log(mushroomsList.join('\n'));
+       console.log('------------------------');
+*/
+    //  **5** alternatyva - optimalesne versija
+    /*       sql = 'SELECT `mushroom`, `weight` FROM `mushroom` ORDER BY `mushroom` ASC';
+           [rows] = await connection.execute(sql);
+           console.log('Grybai:');
+           i = 0;
+           for (const item of rows) {
+               const amount = 1000 / item.weight;
+               console.log(`${++i}) ${firstCapital(item.mushroom)} - ${amount.toFixed(1)}`); // + nuima skaiciu po kablelio
+           }
+           console.log('------------------------');
+       */
+    // ARBA
+    sql = 'SELECT `mushroom`, (1000 / `weight`) as amount\
+     FROM `mushroom` ORDER BY `mushroom` ASC';
     [rows] = await connection.execute(sql);
-
-    let missingTillKg = 0;
-    const needKg = 1000;
-    let numb = 0;
-    let mushroomsList = [];
-    for (let i = 0; i < rows.length; i++) {
-        ++numb;
-        const mushroomName = rows[i].mushroom;
-        const weightPerSort = rows[i].weight;
-        missingTillKg = needKg / weightPerSort;
-
-        const need = missingTillKg % 1 ? missingTillKg.toFixed(1) : missingTillKg.toFixed();
-        //const mushroomNameFirstCapital = mushroomName.charAt(0).toUpperCase() + mushroomName.slice(1);
-        mushroomsList.push(`${numb}) ${firstCapital(mushroomName)} - ${need}`);
-    }
     console.log('Grybai:');
-    console.log(mushroomsList.join('\n'));
+    i = 0;
+    for (const item of rows) {
+        console.log(`${++i}) ${firstCapital(item.mushroom)} - ${(+item.amount).toFixed(1)}`); //${+(+item.amount).toFixed(1)} prieki pliusas nuima skaicius po kablelio
+    }
     console.log('------------------------');
 
     //**6.** _Isspausdinti, visu grybautoju krepselyje esanciu grybu kiekius 
     //(issirikiuojant pagal grybautojo varda nuo abeceles pradzios link pabaigos)
     //sql = 'SELECT `gatherer_id`, SUM(count), COUNT(gatherer_id)\
     //           FROM `basket` GROUP BY `gatherer_id` ASC';
-    sql = 'SELECT `basket`.`gatherer_id` as picker, `count`\
-            FROM`basket` ORDER BY `gatherer_id` ASC;';
-    [rows] = await connection.execute(sql);
-
-    sql2 = 'SELECT `gatherer`.`name`, `gatherer`.`id`\
-            FROM`gatherer` ORDER BY `name` ASC;';
-    [rows2] = await connection.execute(sql2);
-    //console.log(rows);
-    //console.log(rows2);
-
-    console.log(`Grybu kiekis pas grybautoja: `);
-
-    let pickers = [];
-    let newList = [];
-    let number = 0;
-
-    for (const { name } of rows2) {
-        pickers.push(name);
-    }
-    for (i = 0; i < pickers.length; i++) {
-        const person = pickers[i];
-        let basketPerPerson = 0;
-        for (const { picker, count } of rows) {
-            if (picker === i + 1) {
-                basketPerPerson += count;
-            }
+    /*    sql = 'SELECT `basket`.`gatherer_id` as picker, `count`\
+                FROM`basket` ORDER BY `gatherer_id` ASC;';
+        [rows] = await connection.execute(sql);
+    
+        sql2 = 'SELECT `gatherer`.`name`, `gatherer`.`id`\
+                FROM`gatherer` ORDER BY `name` ASC;';
+        [rows2] = await connection.execute(sql2);
+        //console.log(rows);
+        //console.log(rows2);
+    
+        console.log(`Grybu kiekis pas grybautoja: `);
+    
+        let pickers = [];
+        let newList = [];
+        let number = 0;
+    
+        for (const { name } of rows2) {
+            pickers.push(name);
         }
-        newList.push({ person, basketPerPerson })
-    }
-    for (const { person, basketPerPerson } of newList) {
-        const fullInfo = `${++number}) ${person} - ${basketPerPerson}`;
-        console.log(`${fullInfo} grybu`);
+        for (i = 0; i < pickers.length; i++) {
+            const person = pickers[i];
+            let basketPerPerson = 0;
+            for (const { picker, count } of rows) {
+                if (picker === i + 1) {
+                    basketPerPerson += count;
+                }
+            }
+            newList.push({ person, basketPerPerson })
+        }
+        for (const { person, basketPerPerson } of newList) {
+            const fullInfo = `${++number}) ${person} - ${basketPerPerson}`;
+            console.log(`${fullInfo} grybu`);
+        }
+        console.log('------------------------');
+    */
+
+    // ARBA alternatyvus opti,alus variantas
+    sql = 'SELECT `name`, SUM(`count`) as amount\
+                FROM`basket`\
+                LEFT JOIN `gatherer`\
+                ON `gatherer`.`id` = `basket`.`gatherer_id`\
+                GROUP BY `basket`.`gatherer_id`\
+                ORDER BY `name`';
+    // su JOIN sujungiam dvi lenteles
+    // su ON sulyginam, kas skirtingose lentelese yra bendro
+    // GROUP BY grupavimas reiksmiu pagal pasirinkta parametra
+    // ORDER BY rykiavimas pagal pasirinkta parametra
+    [rows] = await connection.execute(sql);
+    //console.log(rows);
+    console.log(`Grybu kiekis pas grybautoja: `);
+    i = 0;
+    for (const item of rows) {
+        console.log(`${++i}) ${firstCapital(item.name)} - ${item.amount} grybu`); //${+(+item.amount).toFixed(1)} prieki pliusas nuima skaicius po kablelio
     }
     console.log('------------------------');
 
