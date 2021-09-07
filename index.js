@@ -170,7 +170,7 @@ app.init = async () => {
         console.log('------------------------');
     */
 
-    // ARBA alternatyvus opti,alus variantas
+    // ARBA alternatyvus optimalus variantas
     sql = 'SELECT `name`, SUM(`count`) as amount\
                 FROM`basket`\
                 LEFT JOIN `gatherer`\
@@ -192,34 +192,23 @@ app.init = async () => {
 
     //** 7. ** _Isspausdinti, visu grybautoju krepseliu kainas(issirikiuojant 
     //nuo brangiausio link pigiausio krepselio), suapvalinant iki centu
-    sql = 'SELECT * FROM `mushroom` ORDER BY `id` ASC;';
+    sql = 'SELECT `name`, SUM(`count` * `price` * `weight`/ 1000) as amount\
+                FROM`basket`\
+                LEFT JOIN `gatherer`\
+                ON `gatherer`.`id` = `basket`.`gatherer_id`\
+                LEFT JOIN `mushroom`\
+                ON `mushroom`.`id` = `basket`.`mushroom_id`\
+                GROUP BY `basket`.`gatherer_id`\
+                ORDER BY `amount` DESC';
     [rows] = await connection.execute(sql);
-
-    sql2 = 'SELECT * FROM`gatherer` ORDER BY `name` ASC;';
-    [rows2] = await connection.execute(sql2);
-
-    sql3 = 'SELECT `basket`.`gatherer_id`, `basket`.`mushroom_id`, `basket`.`count` FROM `basket`';
-    [rows3] = await connection.execute(sql3);
-
-    //console.log(rows);
-    //console.log(rows2);
-    //console.log(rows3);
-
-    /*let mushroomSortList = [];
-    for (const { mushroom_id } of rows3) {
-        mushroomSortList.push(mushroom_id);
-        console.log(mushroomSortList);
+    console.log(rows);
+    console.log(`Grybu krepselio kainos pas grybautoja:`);
+    i = 0;
+    for (const item of rows) {
+        console.log(`${++i}) ${firstCapital(item.name)} - ${+item.amount} EUR`); //${+(+item.amount).toFixed(1)} prieki pliusas nuima skaicius po kablelio
     }
-    for (i = 0; i < mushroomSortList.length; i++) {
-        const sort = mushroomSortList[i];
-        let qtyPerSort = 0
-        for (const { mushroom_id, count } of rows3) {
-            if (sort === i + 1) {
-                qtyPerSort += count;
-            }
-        }
-        mushroomSortList.push(person, qtyPerSort)
-    }*/
+    console.log('------------------------');
+
 }
 
 app.init();
