@@ -259,6 +259,20 @@ app.init = async () => {
     await mushroomsByRating('lt');
     await mushroomsByRating('en');
     //await mushroomsByRating();
+
+    //** 9 ** _Isspausdinti, visus grybus, kuriu ivertinimas geresnis 
+    //arba lygus 4 zvaigzdutem, isrikiuotus gerejimo tvarka
+    sql = 'SELECT `rating`, `mushroom` FROM `mushroom`\
+            ORDER BY `rating` ASC';
+    [rows] = await connection.execute(sql);
+    console.log(rows);
+    let mushroomList = [];
+    for (const { rating, mushroom } of rows) {
+        if (rating >= 4) {
+            mushroomList.push(firstCapital(mushroom));
+        }
+    }
+    console.log(`Grybautojai: ${mushroomList.join(', ')}.`);
 }
 
 app.init();
