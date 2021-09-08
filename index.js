@@ -223,7 +223,7 @@ app.init = async () => {
     [rows] = await connection.execute(sql);
     console.log(rows);*/
     console.log('');
-    async function mushroomsByRating(lang) {
+    async function mushroomsByRating(lang) {  // kaip default galima irasyti lang = 'en'
         const langList = ['en', 'lt'];
         lang = langList.includes(lang) ? lang : langList[0];  //default reiksme bet kokiu atveju yra pirmas variantas kalbu sarase
         sql = 'SELECT `ratings`.`id`, `name_' + lang + '`, SUM(`count`) as amount\
