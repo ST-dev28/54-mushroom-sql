@@ -278,6 +278,7 @@ app.init = async () => {
     // ARBA
     sql = 'SELECT `rating`, `mushroom` FROM `mushroom` WHERE `rating` BETWEEN 4 AND 5\
             ORDER BY `rating` ASC';
+    // vietoj BETWEEN AND galima naudoti >=
     [rows] = await connection.execute(sql);
     let mushroomList = [];
     for (const { mushroom } of rows) {
