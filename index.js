@@ -259,10 +259,11 @@ app.init = async () => {
     await mushroomsByRating('lt');
     await mushroomsByRating('en');
     //await mushroomsByRating();
+    console.log('------------------------');
 
     //** 9 ** _Isspausdinti, visus grybus, kuriu ivertinimas geresnis 
     //arba lygus 4 zvaigzdutem, isrikiuotus gerejimo tvarka
-    sql = 'SELECT `rating`, `mushroom` FROM `mushroom`\
+    /*sql = 'SELECT `rating`, `mushroom` FROM `mushroom`\
             ORDER BY `rating` ASC';
     [rows] = await connection.execute(sql);
     console.log(rows);
@@ -273,6 +274,20 @@ app.init = async () => {
         }
     }
     console.log(`Grybautojai: ${mushroomList.join(', ')}.`);
+*/
+    // ARBA
+    sql = 'SELECT `rating`, `mushroom` FROM `mushroom` WHERE `rating` BETWEEN 4 AND 5\
+            ORDER BY `rating` ASC';
+    [rows] = await connection.execute(sql);
+    let mushroomList = [];
+    for (const { mushroom } of rows) {
+        mushroomList.push(firstCapital(mushroom));
+    }
+    console.log(`Grybautojai: ${mushroomList.join(', ')}.`);
+    console.log('------------------------');
+
+    //**10** _Isspausdinti, visus grybus, kuriu ivertinimas yra viena is 
+    //nurodytu reiksmiu: 1, 3 arba 5 zvaigzdutem, isrikiuotus gerejimo tvarka
 }
 
 app.init();
