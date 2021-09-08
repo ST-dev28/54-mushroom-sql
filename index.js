@@ -288,6 +288,16 @@ app.init = async () => {
 
     //**10** _Isspausdinti, visus grybus, kuriu ivertinimas yra viena is 
     //nurodytu reiksmiu: 1, 3 arba 5 zvaigzdutem, isrikiuotus gerejimo tvarka
+    sql = 'SELECT `rating`, `mushroom` FROM `mushroom` WHERE `rating` IN (1, 3, 5)\
+            ORDER BY `rating` ASC';
+    [rows] = await connection.execute(sql);
+    //console.log(rows);
+    let mushroomsList = [];
+    for (const { mushroom } of rows) {
+        mushroomsList.push(firstCapital(mushroom));
+    }
+    console.log(`Grybai: ${mushroomsList.join(', ')}.`);
+    console.log('------------------------');
 }
 
 app.init();
