@@ -222,7 +222,7 @@ app.init = async () => {
     ORDER BY `ratings`.`id` DESC';
     [rows] = await connection.execute(sql);
     console.log(rows);*/
-
+    console.log('');
     async function mushroomsByRating(lang) {
         const langList = ['en', 'lt'];
         lang = langList.includes(lang) ? lang : langList[0];  //default reiksme bet kokiu atveju yra pirmas variantas kalbu sarase
@@ -235,11 +235,30 @@ app.init = async () => {
     GROUP BY `ratings`.`id`\
     ORDER BY `ratings`.`id` DESC';
         [rows] = await connection.execute(sql);
-        console.log(rows);
+        //console.log(rows);
+
+        if (lang === 'lt') {
+            console.log(`Grybu kiekis pagal ivertinima:`);
+            for (let { id, name_lt, amount } of rows) {
+                if (amount === null) {
+                    amount = 0;
+                }
+                console.log(`${id} zvaigzdutes (${name_lt}) - ${amount} grybai`);
+            }
+        } else {
+            console.log('------------------------');
+            console.log('Mushrooms count by rating:');
+            for (let { id, name_en, amount } of rows) {
+                if (amount === null) {
+                    amount = 0;
+                }
+                console.log(`${id} stars (${name_en}) - ${amount} mushrooms`);
+            }
+        }
     }
-    mushroomsByRating('lt');
-    mushroomsByRating('en');
-    mushroomsByRating();
+    await mushroomsByRating('lt');
+    await mushroomsByRating('en');
+    //await mushroomsByRating();
 }
 
 app.init();
