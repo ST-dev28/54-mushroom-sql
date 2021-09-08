@@ -235,9 +235,9 @@ app.init = async () => {
         [rows] = await connection.execute(sql);
         console.log(rows);
     }
-    const kalbaLt = mushroomsByRating('lt');
-    const kalbaEn = mushroomsByRating('en');
-    const kalba = mushroomsByRating();
+    mushroomsByRating('lt');
+    mushroomsByRating('en');
+    mushroomsByRating();
 }
 
 app.init();
