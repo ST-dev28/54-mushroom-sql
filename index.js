@@ -241,7 +241,6 @@ app.init = async () => {
             console.log(`Grybu kiekis pagal ivertinima:`);
             for (let { id, name_lt, amount } of rows) {
                 if (amount === null) {
-                    //amount = 0;
                     break  // nespausdinti, jei reiksme nuline
                 }
                 console.log(`${id} zvaigzdutes (${name_lt}) - ${amount} grybai`);
@@ -251,7 +250,6 @@ app.init = async () => {
             console.log('Mushrooms count by rating:');
             for (let { id, name_en, amount } of rows) {
                 if (amount === null) {
-                    //amount = 0;
                     break
                 }
                 console.log(`${id} stars (${name_en}) - ${amount} mushrooms`);
