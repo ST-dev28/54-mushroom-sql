@@ -1,3 +1,9 @@
+## paskaitos irasai
+
+## 1. https://www.youtube.com/watch?v=imH1cCPCJaQ&list=PLcLHBZr0jPAC5d8qT3Axq30YPnXTfkjhQ&index=161&ab_channel=RimantasBelovas
+
+## 2. https://www.youtube.com/watch?v=9Kwtt3pepTc&list=PLcLHBZr0jPAC5d8qT3Axq30YPnXTfkjhQ&index=162&ab_channel=RimantasBelovas
+
 # Taxi
 
 ## Pasiruosimas
